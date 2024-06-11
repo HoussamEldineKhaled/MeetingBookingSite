@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Company Controller</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+    $('#createCompany').click(function() {
+        $.ajax({
+            type: 'POST',
+            url: '../php/Controllers/CompanyController.php',
+            data: {
+                action: 'create',
+                CompanyName: '#cn',
+                CompanyDescription: '#cd',
+                CompanyEmail: '#ce',
+                CompanyLogo: '#cl',
+                CompanyActive: '#ca'
+            },
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                console.log("AJAX request error:", status, error);
+            }
+        });
+    });
+});
+    </script>
+
+</head>
+<body>
+    <form action="">
+        <label for="CompanyId">ID:</label><br>
+        <input type="number" id="cid"><br>
+        <label for="CompanyName">Name:</label><br>
+        <input type="text" id="cn"><br>
+        <label for="CompanyDescription">Description:</label><br>
+        <input type="text" id="cd"><br>
+        <label for="CompanyEmail">Email:</label><br>
+        <input type="email" id="ce"><br>
+        <label for="CompanyLogo">Logo:</label><br>
+        <input type="image" id="cl"><br>
+        <label for="CompanyActive">Activity:</label><br>
+        <input type="number" id="ca"><br><br>
+        <button type="submit" id="createCompany">Company Creation</button>
+
+    </form>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js">
+$(document).ready(function(){
+    $("#huss").submit(function(event){
+        event.preventDefault();
+        var formData = $(this).serialize();
+        $.ajax({
+            url: 'insert path',
+            type:'POST',
+            data: formData,
+            success: function(response){
+                console.log("success!");
+            },
+            error: function(error) {
+                console.log(error);
+              }
+        });
+    });
+});
+</script>
+
+    <style>
+        body {
+            
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          margin: 0;
+        }
+    
+        .mainfor {
+          
+          border-radius: 10px;
+          border: 1px solid black;
+          padding: 20px;
+          width: 200px;
+          font-size:larger;
+          
+        }
+    
+        form {
+          text-align: center;
+          margin: 0 auto;
+          
+        }
+        #un{
+            border-radius: 25px;
+        }
+        #pass{
+            border-radius: 25px;
+        }
+        
+        #login:hover{
+            border-color: rgba(133, 255, 108, 0.87);
+            background-color: rgba(133, 255, 108, 0.87);
+        }
+        #un:hover{
+            border-color: rgba(133, 255, 108, 0.87);
+        }
+        #pass:hover{
+            border-color: rgba(133, 255, 108, 0.87);
+        }
+        #login{
+            background-color: rgba(255, 233, 108, 0.87);
+            font-size:medium;
+            border-radius: 9px; 
+            padding: 5px 10px; 
+        }
+      </style>
+  </head>
+  <body>
+    <div class="mainfor">
+      <form id="huss">
+        <label for="username">email</label>
+        <br>
+        <input type="email" name="username" id="un"> 
+        <br><br>
+        <label for="pass">password</label>
+        <br>
+        <input type="password" name="pass" id="pass"> 
+        <br><br>
+       
+        <input type="submit" id="login">
+      </form>
+    </div>
+  </body>
+  </html>
+
+
+
+
+</html>

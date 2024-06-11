@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <script>
+        $(document).ready(function () {
+                $('#createMeeting').click(function () {
+                    $.ajax({
+                        type: 'POST',
+                        url: '../php/Controllers/MeetingController.php',
+                        data: {
+                            action: 'create',
+                            StartTime: '#st',
+                            EndTime: '#se',
+                            RelatedRoom: '#et',
+                            NumberOfAttendees: '#noa',
+                            MeetingStatus: '#ms',
+                            MeetingManagerId: '#mmi',
+                            Duration: '#d'
+                        },
+                        dataType: 'json',
+                        success: function (response) {
+                            console.log(response);
+                        },
+                        error: function (xhr, status, error) {
+                            console.log("AJAX request error:", status, error);
+                        }
+                    });
+                });
+            });
+    </script>
+</head>
+<body>
+    <form action="">
+        <label for="ReservationId">ID:</label><br>
+        <input type="text" id="rid"><br>
+        <label for="StartTime">Start Time:</label><br>
+        <input type="datetime-local" id="st"><br>
+        <label for="EndTime">End Time:</label><br>
+        <input type="datetime-local" id="et"><br>
+        <label for="RelatedRoom">Room Number:</label><br>
+        <input type="number" id="rr"><br>
+        <label for="NumberOfAttendees">Number of People:</label><br>
+        <input type="number" id="noa"><br>
+        <label for="MeetingStatus">Status:</label><br>
+        <input type="number" id="ms"><br>
+        <label for="MeetingManagerId">Meeting Manager:</label><br>
+        <input type="text" id="mmi"><br>
+        <label for="Duration">Duration:</label><br>
+        <input type="number" id="d"><br><br>
+        <button type="submit" id="creatMeeting">Meeting Creation</button>
+
+
+    </form>
+</body>
+</html>

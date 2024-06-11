@@ -1,0 +1,323 @@
+<!DOCTYPE HTML>
+<html>
+
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        const dates = [
+            {
+                "$id": "1",
+                "reservationId": 123,
+                "startTime": "2023-08-02T16:05:14.610Z",
+                "endTime": "2023-08-02T16:15:00.000Z",
+                "relatedRoom": 1,
+                "numberOfAttendees": 10,
+                "meetingStatus": true,
+                "meetingManager": "John Doe",
+                "relatedRoomNavigation": null
+            },
+            {
+                "$id": "2",
+                "reservationId": 456,
+                "startTime": "2023-08-03T10:30:00.000Z",
+                "endTime": "2023-08-03T12:00:00.000Z",
+                "relatedRoom": 2,
+                "numberOfAttendees": 20,
+                "meetingStatus": false,
+                "meetingManager": "Jane Smith",
+                "relatedRoomNavigation": null
+            },
+            {
+                "$id": "3",
+                "reservationId": 789,
+                "startTime": "2023-08-05T14:00:00.000Z",
+                "endTime": "2023-08-05T16:00:00.000Z",
+                "relatedRoom": 3,
+                "numberOfAttendees": 5,
+                "meetingStatus": true,
+                "meetingManager": "Bob Johnson",
+                "relatedRoomNavigation": null
+            },
+            {
+                "$id": "4",
+                "reservationId": 101,
+                "startTime": "2023-08-07T09:00:00.000Z",
+                "endTime": "2023-08-07T11:00:00.000Z",
+                "relatedRoom": 4,
+                "numberOfAttendees": 15,
+                "meetingStatus": false,
+                "meetingManager": "Alice Lee",
+                "relatedRoomNavigation": null
+            },
+            {
+                "$id": "5",
+                "reservationId": 202,
+                "startTime": "2023-08-08T13:30:00.000Z",
+                "endTime": "2023-08-08T15:30:00.000Z",
+                "relatedRoom": 5,
+                "numberOfAttendees": 8,
+                "meetingStatus": true,
+                "meetingManager": "Mike Brown",
+                "relatedRoomNavigation": null
+            }
+        ];
+
+        function getDayName(date) {
+            switch (date) {
+                case 1: return 'Monday';
+                case 2: return 'Tuesday';
+                case 3: return 'Wednesday';
+                case 4: return 'Thursday';
+                case 5: return 'Friday';
+            }
+        }
+
+        function getStartAndEndOfWeek(selectedDate) {
+            const firstDayOfWeek = selectedDate.getDate() - selectedDate.getDay() + 1;
+            const firstDay = new Date(selectedDate);
+            firstDay.setDate(firstDayOfWeek);
+            const lastDay = new Date(selectedDate);
+            lastDay.setDate(firstDay.getDate() + 6);
+            return { start: firstDay, end: lastDay };
+        }
+
+        function populateCalendar(day, events) {
+            const dayColumn = $(`#${day}`);
+            dayColumn.empty();
+
+            const timeInterval = 60; // Duration of each time interval in minutes
+            const timeSlotHeightPercentage = 10; // Height of each time slot as a percentage
+            const timeSlotMarginPercentage = 2; // Margin between time slots as a percentage
+
+            events.forEach(event => {
+                const startTime = new Date(event.startTime);
+                const endTime = new Date(event.endTime);
+
+                const startMinutes = startTime.getHours() * 60 + startTime.getMinutes() - 480; // Convert to minutes and offset by 8:00am
+                const durationMinutes = (endTime - startTime) / (1000 * 60); // Convert duration to minutes
+
+                const startSlot = Math.floor(startMinutes / timeInterval);
+                const slotCount = Math.ceil(durationMinutes / timeInterval);
+
+                const marginTop = startSlot > 0 ? timeSlotMarginPercentage : 0; // Apply top margin if there's a meeting beforehand
+
+                const meetingDiv = $("<div>")
+                    .addClass("meeting")
+                    .text(`Event ID: ${event.reservationId}\n${event.startTime.split("T")[0]}`)
+                    .css({
+                        top: `${(startSlot * (timeSlotHeightPercentage + timeSlotMarginPercentage)) + (marginTop * startSlot)}%`,
+                        height: `${slotCount * (timeSlotHeightPercentage + timeSlotMarginPercentage)}%`
+                    });
+
+                dayColumn.append(meetingDiv);
+            });
+        }
+
+        const dateInput = document.getElementById("dateInput");
+        const invisibleSubmit = document.getElementById("invisibleSubmit");
+
+        const today = new Date().toISOString().split("T")[0];
+        dateInput.value = today;
+
+        dateInput.addEventListener("change", function () {
+            invisibleSubmit.click();
+        });
+
+        invisibleSubmit.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            const selectedDate = new Date(dateInput.value);
+            const { start, end } = getStartAndEndOfWeek(selectedDate);
+
+            for (let i = 0; i < 5; i++) {
+                const currentDay = new Date(start);
+                currentDay.setDate(start.getDate() + i);
+                const dayOfWeek = getDayName(currentDay.getDay());
+
+                const eventsForDay = dates.filter(event => {
+                    const startTime = new Date(event.startTime);
+                    return startTime.toDateString() === currentDay.toDateString();
+                });
+
+                populateCalendar(dayOfWeek, eventsForDay);
+            }
+        });
+
+        invisibleSubmit.click();
+    });
+</script>
+    <script>
+       
+        function getRandomColor() {
+          const letters = "0123456789ABCDEF";
+          let color = "#";
+          for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+          }
+          return color;
+        }
+      
+       
+        document.documentElement.style.setProperty('--random-color', getRandomColor());
+      </script>
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const dateInput = document.getElementById("dateInput");
+            const invisibleSubmit = document.getElementById("invisibleSubmit");
+            
+            
+            const today = new Date().toISOString().split("T")[0];
+            
+        
+            dateInput.value = today;
+          
+            
+            dateInput.addEventListener("change", function() {
+             
+              invisibleSubmit.click();
+            });
+          });
+      </script>
+<style>
+    :root {
+        --random-color: #000; 
+      }
+      #invisibleSubmit {
+        position: absolute;
+        left: -9999px;
+        top: -9999px;
+      }
+    .meeting{
+        width:96%;
+        margin:2px;
+        border-radius: 4%;
+        height:10%;
+        background-color: var(--random-color);
+    }
+    .date{
+        width:14%; 
+        border-color:black;
+        border-style: dashed;
+        height:14%;
+       
+        
+        display:flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        order:1;
+        text-align: center;
+
+
+    }
+    .days{
+        width:79%;
+        border-color:black;
+        border-style: dashed;
+        display:flex;
+        order:2;
+        margin-left:2px;
+        
+    }
+    .days-col{
+        width:153px;
+        margin:2px;
+        text-align: center;
+        
+       
+
+    }
+    .rows{
+        height:10%;
+        width:100%;
+        
+        margin: 2px;
+    }
+    .container{
+        display:flex;
+        
+        margin: 2px 60px 2px 60px;
+        
+    }
+    .times{
+        display:inline-block;
+        width:7%;
+        height:98%;
+        margin-right:2px;
+       margin-left:7%;
+        height:490.8px;
+        border-color:black;
+        border-style: dashed;
+        order:2;
+        text-align:center;
+    }
+    .Calendar-Container{
+        width:79%;
+        margin-left:0%;
+        height:500px;
+        border-color:black;
+        border-style: dashed;
+        display:flex;
+        order:3;
+    }
+    .calendar-col {
+    width: 150px;
+    height: 98%;
+    margin: 2px;
+    border-color: rgb(229, 80, 80);
+    border-style: dashed;
+   display:inline-block;
+
+       
+
+        
+
+    }
+</style>
+
+</head>
+
+<body>
+    <div class="container" id="container-1">
+        <form class="date"> <input type="date" id="dateInput" name="selectedDate">
+            <button type="submit" id="invisibleSubmit"></button></form>
+        <div class="days">
+            <div class="days-col">Monday</div>
+            <div class="days-col">Tuesday</div>
+            <div class="days-col">Wednesday</div>
+            <div class="days-col">Thursday</div>
+            <div class="days-col">Friday</div>
+            <div class="days-col">Saturday</div>
+            <div class="days-col">  Sunday</div>
+        </div>
+    </div>
+    <div class="container" id="container-2">
+       
+      
+        <div class="times">
+        <div class="rows">8:00am</div>
+        <div class="rows">9:00am</div>
+        <div class="rows">10:00am</div>
+        <div class="rows">11:00am</div>
+        <div class="rows">12:00pm</div>
+        <div class="rows">1:00pm</div>
+        <div class="rows">2:00pm</div>
+        <div class="rows">3:00pm</div>
+        <div class="rows">4:00pm</div>
+        <div class="rows">5:00pm</div>
+
+    </div>
+    <div class="Calendar-Container">
+    <div id="Monday" class="calendar-col"><div class="meeting"></div></div>
+    <div id="Tuesday" class="calendar-col"></div>
+    <div id="Wednesday" class="calendar-col"></div>
+    <div id="Thursday" class="calendar-col"></div>
+    <div id="Friday" class="calendar-col"></div>
+    <div id="Saturday" class="calendar-col"></div>
+    <div id="Sunday" class="calendar-col"></div>
+    </div>
+    </div>
+    
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+
+
+
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous">
+
+    </script>
+
+    <script>
+        $(document).ready(function(){
+            $(".btn").click(function(){
+                var action = 'login';
+                var username = $("#name").val();
+                var password = $("#pass").val();
+        
+                $.ajax({
+                    type: "POST",
+                    url: "../php/Controllers/SystemUserController.php",
+                    data: {
+                        action: action,
+                        Email: username,
+                        Password: password
+                    },
+                    dataType: "json",
+                    success: function(data) {
+                        console.log("Response from server:", data); // Log the response
+                        var trimmedResponse = $.trim(data.error); // Trim whitespace
+                       
+        
+                        if (data.message) {
+                            
+                            if(data.message==="Admin")
+                            window.location.href = "../Frontend/adminpage.php";
+                            else if(data.message==='User')
+                            window.location.href = "../Frontend/userpage.php";
+                            
+                        } else if (data.error) {
+                            alert("Login failed: email or password are incorrect");
+                        } else {
+                            alert("An unexpected response was received");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("AJAX request error:", status, error);
+                    }
+                });
+            });
+        });
+        
+    </script>
+
+    
+
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+            text-decoration: none;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        body{
+            background-color:rgb(255, 240, 220);
+        }
+        .wrapper{
+            display: flex;
+            max-width: 500px;
+            width: 100%;
+            height: 350px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform:translate(-50%, -50%);
+        }
+        .wrapper .left,
+        .wrapper .right{
+            width: 50%;
+            height: 100%;
+        }
+        .wrapper .left img{
+            display: block;
+            width: 300px;
+            margin: 25px auto 0;
+        }
+        .wrapper .right{
+            background: rgba(253, 252, 250, 0.618);
+            margin-left: 14px;
+        }
+        .wrapper .right .tabs h2{
+            text-align: center;
+            padding: 5px 10px;
+            font-size: 14px;
+            color: #494f57;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .wrapper .right .tabs{
+            margin-top: 20px;
+        }
+        .wrapper .right .input_field{
+            margin-bottom: 15px;
+        }
+        .wrapper .right .input_field .input{
+            width: 100%;
+            padding: 10px 15px;
+            border: 0;
+            font-size: 12px;
+            background: #ececeb;
+        }
+        .wrapper .right .btn{
+            margin-top: 20px;
+            background: burlywood;
+            padding: 10px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: bold;
+        }
+        .wrapper .right .btn:hover{
+            background-color:rgb(196, 120, 20);
+        }
+
+        .wrapper .right .btn a{
+            color: #ececeb;
+        }
+    </style>
+
+</head>
+
+
+
+<body>
+    <div class="wrapper">
+        <div class="left">
+            <img src="../Frontend/img/Logo.png" alt="Meeting_img">
+        </div>
+
+        <div class="right">
+            <div class="tabs">
+                <h2 class="login_t">Login</h2>
+                <div class="input_field">
+                    <input type="text" placeholder="Email" class="input" id="name">
+                </div>
+                <div class="input_field">
+                    <input type="password" placeholder="Password" class="input" id="pass">
+                </div>
+                <div class="btn"> <a href="#">Login</a></div>
+            </div>
+
+        </div>
+
+
+    </div>
+</body>
+
+</html>

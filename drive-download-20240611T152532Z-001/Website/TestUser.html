@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script>
+        $(document).ready(function () {
+                $('#createUser').click(function () {
+                $.ajax({
+                    type: 'POST',
+                    url: '../php/Controllers/SystemUserController.php',
+                    data: {
+                        action: 'create',
+                        UserName: '#un',
+                        Birth: '#b',
+                        Gender: '#g',
+                        Email: '#e',
+                        UserPassword: '#p',
+                        Role: '#ur',
+                        CompanyId: '#cid'
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        console.log(response);
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("AJAX request error:", status, error);
+                    }
+                });
+            });
+
+        });
+
+    </script>
+</head>
+
+
+<body>
+    <form action="">
+    <label for="Id">ID:</label><br>
+    <input type="number" ><br>
+    <label for="UserName">User Name:</label><br>
+    <input type="text" id="un"><br>
+    <label for="Birth">Date of Birth:</label><br>
+    <input type="datetime-local" id="b"><br>
+    <label for="Gender">Gender:</label><br>
+    <input type="text" id="g"><br>
+    <label for="Email">Email:</label><br>
+    <input type="email" id="e"><br>
+    <label for="UserPassword">Password:</label><br>
+    <input type="password" id="p"><br>
+    <label for="UserRole">Role:</label><br>
+    <input type="text" id="ur"><br>
+    <label for="CompanyId">Company ID:</label><br>
+    <input type="number" id="cid"><br><br>
+    <button type="submit">User Creation</button>
+
+    </form>
+
+
+</body>
+</html>

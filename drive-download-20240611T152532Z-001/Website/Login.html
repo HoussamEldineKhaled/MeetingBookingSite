@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js">
+$(document).ready(function(){
+    $("input").submit(function(event){
+        event.preventDefault();
+        var formData = $(this).serialize();
+        $.ajax({
+            url: 'insert path',
+            type:'POST',
+            data: formData,
+            success: function(response){
+                console.log("success!");
+            },
+            error: function(error) {
+                console.log(error);
+              }
+        });
+    });
+  });
+
+</script>
+
+    <style>
+      body 
+      {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-image: url("Meeting.jpeg");
+        background-position: center;
+        background-position: fixed;
+        background-repeat: no-repeat;
+        background-color:rgb(255, 240, 220);
+
+      }
+      .Logo{
+        position:absolute;
+        top: 0;
+        width: 300px;
+        z-index: 1;
+      }
+      #frm{
+        top: 0;
+        text-align: center;
+        width: 80%;
+        height: 560px;
+        min-width: 320px;
+        max-width: 475px;
+        margin-top: 200px;
+        background: rgba(253, 253, 250, 0.618);
+        position: absolute;
+        box-shadow:  0px 2px 5px rgba(0,0,0,.25);
+        border-radius: 10px;
+      }
+      input{
+          font-size:large;
+          display: block;
+          margin: auto auto;
+          width: 90%;
+          margin-bottom: 5.2em;
+          padding: 0.5em;
+          border: none;
+          border-bottom: 1px solid peru;
+          padding-bottom: 10mm;
+          color: #757575;
+          
+      }
+      #btn{
+        font-size: large;
+        background-color:burlywood;
+        width: 100%;
+        height: 50px;
+        margin-top: 190px;
+        border: none;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        position: relative;
+      }
+      #btn:hover{
+        background-color:rgb(196, 120, 20);
+      }
+
+    </style>
+  </head>
+  <body>
+    <img class="Logo" src="Logo.png"></img>
+    <form action="" id="frm">
+    <div class="log-form">
+        <input type="text" option="username" placeholder="Username"/><br>
+        <input type="password" option="username" placeholder="Password"/>
+        <button type="submit" id="btn">Login</button>
+    </div>
+    </form>
+
+
+
+
+  </body>
+
+
+
+
+
+</html>

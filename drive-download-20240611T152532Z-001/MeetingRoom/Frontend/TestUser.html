@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>System User Controller Test</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<div>
+    <label>Select Action:</label>
+    <select id="actionSelect">
+        <option value=""></option>
+        <option value="getAll">Get All Users</option>
+        <option value="getById">Get User by ID</option>
+        <option value="create">Create User</option>
+        <option value="login">Login User</option>
+        <option value="delete">Delete User</option>
+    </select>
+</div>
+<!-- Form to get all Users -->
+<form id="getAllForm" style="display: none;">
+    <button type="submit">Submit</button>
+</form>
+<!-- Form for Get User by ID -->
+<form id="getByIdForm" style="display: none;">
+    <label>ID:</label>
+    <input type="text" id="idInput" placeholder="Enter ID">
+    <button type="submit">Submit</button>
+</form>
+
+<!-- Form for Create User -->
+<form id="createForm" style="display: none;">
+    <label>Name:</label>
+    <input type="text" id="nameInput" placeholder="Enter Name">
+    <br>
+    <label>Choose Company:</label>
+    <select id="companySelect"></select>
+    <br>
+    <label>Birth:</label>
+    <input type="date" id="birthInput">
+    <br>
+    <label>Gender:</label>
+    <select id="genderSelect">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+    </select>
+    <br>
+    <label>Email:</label>
+    <input type="text" id="emailInput" placeholder="Enter Email">
+    <br>
+    <label>Password:</label>
+    <input type="text" id="passwordInput" placeholder="Enter Password">
+    <br>
+    <label>Role:</label>
+    <select id="roleInput">
+        <option value="User">User</option>
+        <option value="Admin">Admin</option>
+        
+    </select>
+    <br>
+   
+    <button type="submit">Create User</button>
+</form>
+
+<!-- Form for Login User -->
+<form id="loginForm" style="display: none;">
+    <label>Email:</label>
+    <input type="email" id="email" placeholder="Enter Email">
+    <label>Password:</label>
+    <input type="password" id="password" placeholder="Enter Password">
+    <button type="submit">Login</button>
+</form>
+
+<!-- Form for Delete User -->
+<form id="deleteForm" style="display: none;">
+    <label>Select User to Delete:</label>
+    <select id="deleteUserSelect"></select>
+    <button type="submit">Delete User</button>
+</form>
+<div id="resultBox"></div>
+
+<script>
+$(document).ready(function() {
+    const resultBox = $('#resultBox');
+    const companySelect = $('#companySelect');
+
+    // Populate the company select box using AJAX
+$.ajax({
+    type: 'POST',
+    url: '../php/Controllers/CompanyController.php', 
+    data: {
+        action: 'getAll' 
+    },
+    dataType: 'json',
+    success: function(response) {
+        console.log(response);
+        const companySelect = $('#companySelect');
+        companySelect.empty(); // Clear any previous options
+        response.forEach(company => {
+            const option = $('<option>').text(company.CompanyName); 
+            companySelect.append(option);
+        });
+    },
+    error: function(xhr, status, error) {
+        console.log("AJAX request error:", status, error);
+    }
+});
+ // Populate the delete user select box using AJAX
+ const deleteUserSelect = $('#deleteUserSelect');
+$.ajax({
+    type: 'POST',
+    url: '../php/Controllers/SystemUserController.php',
+    data: {
+        action: 'getAll'
+    },
+    dataType: 'json',
+    success: function(response) {
+        deleteUserSelect.empty(); 
+        response.forEach(user => {
+            const option = $('<option>').text(user.UserName).val(user.Id); 
+            deleteUserSelect.append(option);
+        });
+    },
+    error: function(xhr, status, error) {
+        console.log("AJAX request error:", status, error);
+    }
+});
+    // Show the corresponding form based on selected action
+    $('#actionSelect').change(function() {
+        const selectedAction = $(this).val();
+        $('form').hide();
+        $(`#${selectedAction}Form`).show();
+    });
+
+    // Handle form submissions
+    $('form').submit(function(event) {
+        event.preventDefault();
+        const selectedAction = $('#actionSelect').val();
+        let requestData = {
+            action: selectedAction
+        };
+    
+        if (selectedAction === 'getById') {
+            requestData.action="getById";
+            requestData.Id = $('#idInput').val();
+        } else if (selectedAction === 'create') {
+            requestData.action="create";
+            requestData.Name = $('#nameInput').val();
+            requestData.Company = $('#companySelect').val();
+            requestData.Birth = $('#birthInput').val();
+            requestData.Gender = $('#genderSelect').val();
+            requestData.Email = $('#emailInput').val();
+            requestData.Password = $('#passwordInput').val();
+            requestData.Role = $('#roleInput').val();
+        } else if (selectedAction === 'login') {
+            requestData.action="login";
+            requestData.Email = $('#email').val();
+            requestData.Password = $('#password').val();
+        }
+        else if(selectedAction==='delete'){
+            requestData.action="delete";
+            requestData.Id = $('#deleteUserSelect').val();
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '../php/Controllers/SystemUserController.php',
+            data: requestData,
+            dataType: 'json',
+            success: function(response) {
+                resultBox.text(JSON.stringify(response, null, 2));
+            },
+            error: function(xhr, status, error) {
+                console.log("AJAX request error:", status, error);
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>

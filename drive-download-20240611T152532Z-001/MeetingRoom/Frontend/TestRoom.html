@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Room Controller Test</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<div>
+    <label>Select Action:</label>
+    <select id="roomActionSelect">
+        <option value=""></option>
+        <option value="getAll">Get All Rooms</option>
+        <option value="getById">Get Room by ID</option>
+        <option value="create">Create Room</option>
+        <option value="delete">Delete Room</option>
+    </select>
+</div>
+<!-- Form to get all Rooms -->
+<form id="getAllForm" style="display: none;">
+    <button type="submit">Submit</button>
+</form>
+<!-- Form for Get Room by ID -->
+<form id="getByIdForm" style="display: none;">
+    <label>ID:</label>
+    <input type="text" id="roomIdInput" placeholder="Enter Room ID">
+    <button type="submit">Submit</button>
+</form>
+
+<!-- Form for Create Room -->
+<form id="createForm" style="display: none;">
+    <label>Room Location:</label>
+    <input type="text" id="roomLocationInput" placeholder="Enter Room Location">
+    <label>Room Capacity:</label>
+    <input type="text" id="roomCapacityInput" placeholder="Enter Room Capacity">
+    <label>Room Description:</label>
+    <input type="text" id="roomDescriptionInput" placeholder="Enter Room Description">
+    <label>Company Name:</label>
+    <select id="companyNameInput"></select>
+    <button type="submit">Create Room</button>
+</form>
+
+<!-- Form for Delete Room -->
+<form id="deleteForm" style="display: none;">
+    <label>Select Room to Delete:</label>
+    <select id="deleteRoomSelect"></select>
+    <button type="submit">Delete Room</button>
+</form>
+
+<div id="roomResultBox"></div>
+
+<script>
+$(document).ready(function() {
+    const roomResultBox = $('#roomResultBox');
+
+    // Populate the delete room select box using AJAX
+    const deleteRoomSelect = $('#deleteRoomSelect');
+    $.ajax({
+        type: 'POST',
+        url: '../php/Controllers/RoomController.php',
+        data: {
+            action: 'getAll'
+        },
+        dataType: 'json',
+        success: function(response) {
+            deleteRoomSelect.empty(); // Clear any previous options
+            response.forEach(room => {
+                const option = $('<option>').text(room.RoomLocation).val(room.RoomId);
+                deleteRoomSelect.append(option);
+            });
+        },
+        error: function(xhr, status, error) {
+            console.log("AJAX request error:", status, error);
+        }
+    });
+
+    // Populate the company select box using AJAX
+const companySelect = $('#companyNameInput');
+$.ajax({
+    type: 'POST',
+    url: '../php/Controllers/CompanyController.php',
+    data: {
+        action: 'getAll'
+    },
+    dataType: 'json',
+    success: function(response) {
+        companySelect.empty(); // Clear any previous options
+        response.forEach(company => {
+            const option = $('<option>').text(company.CompanyName).val(company.CompanyName);
+            companySelect.append(option);
+        });
+    },
+    error: function(xhr, status, error) {
+        console.log("AJAX request error:", status, error);
+    }
+});
+
+
+    // Show the corresponding form based on selected room action
+    $('#roomActionSelect').change(function() {
+        const selectedRoomAction = $(this).val();
+        $('form').hide();
+        $(`#${selectedRoomAction}Form`).show();
+    });
+   
+    // Handle room form submissions
+    $('form').submit(function(event) {
+        event.preventDefault();
+        const selectedRoomAction = $('#roomActionSelect').val();
+        let roomRequestData = {
+            action: selectedRoomAction
+        };
+        if (selectedRoomAction === 'getAll') {
+            roomRequestData.action = 'getAll';
+        }
+        else if (selectedRoomAction === 'getById') {
+            roomRequestData.action = 'getById';
+            roomRequestData.Id = $('#roomIdInput').val();
+        } else if (selectedRoomAction === 'create') {
+            roomRequestData.action = 'create';
+            roomRequestData.RoomLocation = $('#roomLocationInput').val();
+            roomRequestData.RoomCapacity = $('#roomCapacityInput').val();
+            roomRequestData.RoomDescription = $('#roomDescriptionInput').val();
+            roomRequestData.CompanyName = $('#companyNameInput').val();
+        } else if (selectedRoomAction === 'delete') {
+            roomRequestData.action = 'delete';
+            roomRequestData.Id = $('#deleteRoomSelect').val();
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '../php/Controllers/RoomController.php',
+            data: roomRequestData,
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);
+                roomResultBox.text(JSON.stringify(response, null, 2));
+            },
+            error: function(xhr, status, error) {
+                console.log("AJAX request error:", status, error);
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>

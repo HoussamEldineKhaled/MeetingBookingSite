@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Meeting Controller Test</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<div>
+    <label>Select Action:</label>
+    <select id="meetingActionSelect">
+        <option value=""></option>
+        <option value="getAll">Get All Meetings</option>
+        <option value="getByManager">Get Meetings by Manager</option>
+        <option value="getById">Get Meeting by ID</option>
+        <option value="create">Create Meeting</option>
+        <option value="delete">Delete Meeting</option>
+    </select>
+</div>
+<!-- Form to get all Rooms -->
+<form id="getAllForm" style="display: none;">
+    <button type="submit">Submit</button>
+</form>
+<!-- Form for Get Meeting by Manager -->
+<form id="getByManagerForm" style="display: none;">
+    <label>Meeting Manager:</label>
+    <select id="managerSelect"></select>
+    <button type="submit">Submit</button>
+</form>
+
+
+<!-- Form for Get Meeting by ID -->
+<form id="getByIdForm" style="display: none;">
+    <label>Meeting ID:</label>
+    <input type="text" id="meetingIdInput" placeholder="Enter Meeting ID">
+    <button type="submit">Submit</button>
+</form>
+
+<!-- Form for Create Meeting -->
+<form id="createForm" style="display: none;">
+    <label>Start Time:</label>
+    <input type="datetime-local" id="startTimeInput">
+    <br>
+    <label>End Time:</label>
+    <input type="datetime-local" id="endTimeInput">
+    <br>
+    <label>Related Room:</label>
+    
+    <label>Choose Room:</label>
+<select id="relatedRoomSelect"></select>
+    <br>
+    <label>Number of Attendees:</label>
+    <input type="number" id="numAttendeesInput">
+    <br>
+    <label>Meeting Status:</label>
+    <input type="text" id="statusInput" placeholder="Enter Meeting Status">
+    <br>
+    <label>Meeting Manager:</label>
+    <br>
+    <input type="text" id="managerSelect1" >
+    <br>
+    <button type="submit">Create Meeting</button>
+</form>
+
+<!-- Form for Delete Meeting -->
+<form id="deleteForm" style="display: none;">
+    <label>Select Meeting to Delete:</label>
+    <select id="deleteMeetingSelect"></select>
+    <button type="submit">Delete Meeting</button>
+</form>
+<div id="meetingResultBox"></div>
+
+<script>
+$(document).ready(function() {
+
+//populate select related room
+
+const relatedRoomSelect = $('#relatedRoomSelect');
+$.ajax({
+    type: 'POST',
+    url: '../php/Controllers/RoomController.php', // Adjust the path
+    data: {
+        action: 'getAll' // Change this to match your backend action for fetching rooms
+    },
+    dataType: 'json',
+    success: function(response) {
+        relatedRoomSelect.empty(); // Clear any previous options
+        response.forEach(room => {
+            const option = $('<option>').text(room.RoomLocation); // Adjust based on your room data
+            relatedRoomSelect.append(option);
+        });
+    },
+    error: function(xhr, status, error) {
+        console.log("AJAX request error:", status, error);
+    }
+});
+// Populate the manager select box using AJAX
+const managerSelect = $('#managerSelect');
+const managerSelect1=$('managerSelect1');
+$.ajax({
+    type: 'POST',
+    url: '../php/Controllers/SystemUserController.php', 
+    data: {
+        action: 'getAll'
+    },
+    dataType: 'json',
+    success: function(response) {
+        managerSelect.empty(); // Clear any previous options
+        response.forEach(user => {
+            const option = $('<option>').text(user.UserName).val(user.Id); 
+            managerSelect.append(option);
+        });
+    },
+    error: function(xhr, status, error) {
+        console.log("AJAX request error:", status, error);
+    }
+});
+
+
+
+$('#meetingActionSelect').change(function() {
+    const selectedMeetingAction = $(this).val();
+    $('form').hide();
+    $(`#${selectedMeetingAction}Form`).show();
+});
+
+    // Handle meeting form submissions
+    $('form').submit(function(event) {
+        const meetingResultBox=$("#meetingResultBox");
+        event.preventDefault();
+        const selectedMeetingAction = $('#meetingActionSelect').val();
+        let meetingRequestData = {
+            action: selectedMeetingAction
+        };
+    
+        if (selectedMeetingAction === 'getByManager') {
+            meetingRequestData.action = 'getByManager';
+            meetingRequestData.Id = $('#managerSelect').val();
+        } else if (selectedMeetingAction === 'getById') {
+            meetingRequestData.action = 'getById';
+            meetingRequestData.Id = $('#meetingIdInput').val();
+        } else if (selectedMeetingAction === 'create') {
+            meetingRequestData.action = 'create';
+            meetingRequestData.StartTime = $('#startTimeInput').val();
+            meetingRequestData.EndTime = $('#endTimeInput').val();
+            meetingRequestData.RelatedRoom = $('#relatedRoomSelect').val();
+            meetingRequestData.NumberOfAttendees = $('#numAttendeesInput').val();
+            meetingRequestData.MeetingStatus = $('#statusInput').val();
+            meetingRequestData.MeetingManagerId = $('#managerSelect1').val();
+            } else if (selectedMeetingAction === 'delete') {
+            meetingRequestData.action = 'delete';
+            meetingRequestData.Id = $('#deleteMeetingSelect').val();
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '../php/Controllers/MeetingController.php',
+            data: meetingRequestData,
+            dataType: 'json',
+            success: function(response) {
+                meetingResultBox.text(JSON.stringify(response, null, 2));
+            },
+            error: function(xhr, status, error) {
+                console.log("AJAX request error:", status, error);
+            }
+        });
+    });
+});
+
+
+</script>
+
+</body>
+</html>
